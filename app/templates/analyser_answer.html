@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <nav class="navbar">
+  <ul>
+  {%- for item in current_menu.children recursive -%}
+
+    <a href="{{ item.url}}">{{ item.text }}</a>
+    {%- if item.children -%}
+    <ul>
+      {{ loop(item.children) }}
+    </ul>
+    {%- endif -%}
+
+  {%- endfor -%}
+</ul>
+    </nav>
+    </head>
+<body>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
+<table>
+
+  Spot analyser report for {{org_name}}
+
+  <form action="/download_csv" method="get">
+        <input type="hidden" id="file_name" name="file_name" value="{{ filename }}.csv"><br>
+
+  <input type="submit" value="download csv file">
+</form>
+  <br><br>
+
+  <tr>
+
+    <tr>
+      {%- for field in fields -%}
+      <td>
+        {{ field }}
+      </td>
+      {%- endfor -%}
+    </tr>
+
+
+  </tr>
+{%- for s_item in savings -%}
+
+    <tr>
+      {%- for s_bit in s_item -%}
+      <td>
+        {{ s_bit }}
+      </td>
+      {%- endfor -%}
+    </tr>
+
+{%- endfor -%}
+</table>
+
+
+</body>
+</html>
