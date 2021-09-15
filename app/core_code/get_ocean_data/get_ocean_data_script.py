@@ -2,8 +2,9 @@ from spot_handler.api_handler import spot_api
 from spot_handler.db_handler import db_handler
 import json
 
-def get_Ocean_object(orgid, OceanId):
-    orgid = "6060798" + str(orgid)
+def get_Ocean_object(data):
+    orgid = "6060798" + str(data['orgid'])
+    OceanId = data['oceanid']
     spot_handler_instance = spot_api()
     print(orgid)
     print('got here')

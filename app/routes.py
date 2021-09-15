@@ -5,6 +5,7 @@ import json
 from .core_code.calculate import calculate_class
 from .core_code.get_monthly_savings.monthly import get_monthly_report , months_map
 from .core_code.get_monthly_savings.monthly_trend import monthly_trend
+from .core_code.get_ocean_data.get_ocean_data_script import get_Ocean_object
 from .core_code.interrupts.interrups import org_interrupts_report
 from .analyserLog.GetFullSpotAnalyserOrg import getAllPotentialSavingsData
 from.constants import init_globals
@@ -20,10 +21,10 @@ init_globals()
 def index():
     return render_template('main_menu.html')
 
-@app.route('/sf_input')
-@register_menu(app, '.SF_input', 'Salesforce search', order=2)
-def sf_search():
-    return render_template('sf_input.html')
+@app.route('/ocean_feat')
+@register_menu(app, '.ocean_fean', 'check Ocean Features', order=2)
+def ocean_feat():
+    return render_template('ocean_input.html')
 
 @app.route('/monthly_savings')
 @register_menu(app, '.monthly_savings', 'Monthly Savings report', order=3)
@@ -88,6 +89,21 @@ def get_monthly_interrupts():
         month_chosen = chosen_month,
         org_name = org_name
     )
+
+@app.route('/get_ocean_data', methods=['POST'])
+def get_ocean_data():
+
+    headers = dict(request.headers)
+    data = request.form
+    print(data)
+    account_answer = get_Ocean_object(data)
+
+    print(data)
+    return render_template(
+        'sf_answer.html',
+        salesforce_answer = account_answer
+    )
+
 
 @app.route('/monthly_trend', methods=['POST'])
 def get_monthly_savings_trend():
