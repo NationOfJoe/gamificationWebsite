@@ -5,7 +5,7 @@ import json
 from .core_code.calculate import calculate_class
 from .core_code.get_monthly_savings.monthly import get_monthly_report , months_map
 from .core_code.get_monthly_savings.monthly_trend import monthly_trend
-from .core_code.get_ocean_data.get_ocean_data_script import get_Ocean_object
+from .core_code.get_ocean_data.get_ocean_data_script import *
 from .core_code.interrupts.interrups import org_interrupts_report
 from .analyserLog.GetFullSpotAnalyserOrg import getAllPotentialSavingsData
 from.constants import init_globals
@@ -92,17 +92,29 @@ def get_monthly_interrupts():
 
 @app.route('/get_ocean_data', methods=['POST'])
 def get_ocean_data():
-
+    action = request.form.get("action")
+    print (action)
     headers = dict(request.headers)
     data = request.form
     print(data)
-    account_answer = get_Ocean_object(data)
-
-    print(data)
-    return render_template(
-        'sf_answer.html',
-        salesforce_answer = account_answer
-    )
+    if action == 'Search':
+        account_answer = get_Ocean_object(data)
+        return render_template(
+            'sf_answer.html',
+            salesforce_answer = account_answer
+        )
+    elif action == 'check_status':
+        heartbeat = get_Ocean_heartbeat(data)
+        return render_template(
+            'ocean_input.html',
+            cluster_status = heartbeat
+        )
+    else:
+        print ('no valid action')
+        return render_template(
+            'ocean_input.html',
+            cluster_status = None
+        )
 
 
 @app.route('/monthly_trend', methods=['POST'])

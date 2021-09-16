@@ -1,8 +1,12 @@
 
-from gamification_website.app.core_code.get_ocean_data.get_ocean_data import *
+from gamification_website.app.core_code.get_ocean_data.get_ocean_data_script import *
 
-instance = get_Ocean_object(
-    '606079876795',
-    'o-14491d28'
-)
+data = {
+    'orgid': '606079876795',
+    # 'oceanid': 'o-14491d28'
+    'oceanid': 'o-f3376098'
+}
+
+instance = get_Ocean_heartbeat(data)
+
 pass
