@@ -17,7 +17,7 @@
 </ul>
     </nav>
     </head>
-<body>
+
 
 
 <form action="/get_ocean_data" method="post">
@@ -28,16 +28,18 @@
     <input type="text" id="oceanId" name="oceanid"><br>
 
     <input type="submit" name="action" value="Search"><br>
+    <input type="submit" name="action" value="list_vng"><br>
     <input type="submit" name="action" value="check_status">
 
     </form>
 
 <br><br><br>
-Status of cluster is {{cluster_status}}
+Status of cluster is {{cluster_status}}<br>
+number of VNGs is {{vng}}
 
 
 
 
-</form>
+
 </body>
 </html>

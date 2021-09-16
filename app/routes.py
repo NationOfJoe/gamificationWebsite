@@ -109,6 +109,18 @@ def get_ocean_data():
             'ocean_input.html',
             cluster_status = heartbeat
         )
+    elif action == 'list_vng':
+        heartbeat = get_Ocean_heartbeat(data)
+        vngs=list_vng(data)
+        if not vngs:
+            num_vng = 0
+        else:
+            num_vng = vngs.__len__()
+        return render_template(
+            'ocean_input.html',
+            cluster_status = heartbeat,
+            vng=num_vng
+        )
     else:
         print ('no valid action')
         return render_template(

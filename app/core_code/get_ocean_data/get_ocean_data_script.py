@@ -21,3 +21,15 @@ def get_Ocean_heartbeat(data):
         url=URL
     ).text)['response']['items'][0]['status']
     return str(resp)
+
+def list_vng(data):
+    orgid = "6060798" + str(data['orgid'])
+    OceanId = data['oceanid']
+    spot_handler_instance = spot_api()
+    URL="https://api.spotinst.io/ocean/aws/k8s/launchSpec?oceanId={oceanClusterId}".format(oceanClusterId=OceanId)
+    resp = json.loads(spot_handler_instance.rest_session.get(
+        url=URL
+    ).text)['response']['items']
+    if resp == []:
+        return None
+    return (resp)
