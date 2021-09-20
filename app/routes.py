@@ -11,6 +11,12 @@ from .analyserLog.GetFullSpotAnalyserOrg import getAllPotentialSavingsData
 from.constants import init_globals
 
 import datetime
+from nodb import NoDB
+
+
+nodb = NoDB()
+nodb.bucket = 'yoavs3bucket'
+nodb.index = "oceanId"
 
 Menu(app=app)
 init_globals()
@@ -99,6 +105,20 @@ def get_ocean_data():
     print(data)
     if action == 'Search':
         account_answer = get_Ocean_object(data)
+        print('here1')
+        print(data['oceanid'])
+        raw_text = '''
+        {
+            "oceanId": "%s",
+            "oceanData": "%s"
+         }
+        ''' % (data['oceanid'], account_answer)
+        print(raw_text)
+        db_data_to_save = json.loads(raw_text)
+        print('here2')
+        print(db_data_to_save)
+        nodb.save(db_data_to_save)
+        print('here3')
         return render_template(
             'sf_answer.html',
             salesforce_answer = account_answer
