@@ -6,6 +6,7 @@ from .core_code.calculate import calculate_class
 from .core_code.get_monthly_savings.monthly import get_monthly_report , months_map
 from .core_code.get_monthly_savings.monthly_trend import monthly_trend
 from .core_code.get_ocean_data.get_ocean_data_script import *
+from .core_code.get_ocean_data.tinydb_handler import *
 from .core_code.interrupts.interrups import org_interrupts_report
 from .analyserLog.GetFullSpotAnalyserOrg import getAllPotentialSavingsData
 from.constants import init_globals
@@ -98,14 +99,14 @@ def get_monthly_interrupts():
 
 @app.route('/get_ocean_data', methods=['POST'])
 def get_ocean_data():
+    db_instance = tinydb_handler_class()
     action = request.form.get("action")
     print (action)
     headers = dict(request.headers)
     data = request.form
     print(data)
+    account_answer = get_Ocean_object(data)
     if action == 'Search':
-        account_answer = get_Ocean_object(data)
-        print('here1')
         print(data['oceanid'])
         raw_text = '''
         {
@@ -115,39 +116,50 @@ def get_ocean_data():
         ''' % (data['oceanid'], account_answer)
         print(raw_text)
         db_data_to_save = json.loads(raw_text)
-        print('here2')
-        print(db_data_to_save)
-        nodb.save(db_data_to_save)
-        print('here3')
+        db_instance.save_data(
+            ocean_id=data['oceanid'],
+            key_name='ocean_data',
+            key_value=account_answer
+        )
+
         return render_template(
             'sf_answer.html',
             salesforce_answer = account_answer
         )
     elif action == 'check_status':
         heartbeat = get_Ocean_heartbeat(data)
-        return render_template(
-            'ocean_input.html',
-            cluster_status = heartbeat
+        db_instance.save_data(
+            ocean_id=data['oceanid'],
+            key_name='heartbeat',
+            key_value=heartbeat
         )
+        return render_ocean_template(data['oceanid'])
     elif action == 'list_vng':
-        heartbeat = get_Ocean_heartbeat(data)
         vngs=list_vng(data)
         if not vngs:
             num_vng = 0
         else:
             num_vng = vngs.__len__()
-        return render_template(
-            'ocean_input.html',
-            cluster_status = heartbeat,
-            vng=num_vng
+        db_instance.save_data(
+            ocean_id=data['oceanid'],
+            key_name='VNGs',
+            key_value=num_vng
         )
+        return render_ocean_template(data['oceanid'])
     else:
         print ('no valid action')
-        return render_template(
-            'ocean_input.html',
-            cluster_status = None
-        )
+        return render_ocean_template(data['oceanid'])
 
+def render_ocean_template(ocean_id):
+    db_instance = tinydb_handler_class()
+    heartbeat = db_instance.get_data_by_key(ocean_id, 'heartbeat') or 'Can\'t say'
+    num_vng = db_instance.get_data_by_key(ocean_id, 'VNGs') or 'None'
+
+    return render_template(
+        'ocean_input.html',
+        cluster_status=heartbeat,
+        vng=num_vng
+    )
 
 @app.route('/monthly_trend', methods=['POST'])
 def get_monthly_savings_trend():
