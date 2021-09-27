@@ -23,7 +23,7 @@
 <form action="/get_ocean_data" method="post">
 
     <label for="orgid">Customer Organization: (5 digits) </label>
-    <input type="text" id="orgid" name="orgid"><br>
+    <input type="hidden" id="orgid" name="orgid" value="75095"><br>
     <label for="oceanId">Ocean ID </label>
     <input type="text" id="oceanId" name="oceanid"><br>
 
@@ -34,9 +34,13 @@
     </form>
 
 <br><br><br>
+team name is : {{team_name}}<br>
+Score : {{score}}<br>
 Status of cluster is {{cluster_status}}<br>
 number of VNGs is {{vng}}
+<br><br>
 
+json data from cluster : <br><br> {{ocean_data}}
 
 
 

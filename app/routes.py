@@ -122,10 +122,6 @@ def get_ocean_data():
             key_value=account_answer
         )
 
-        return render_template(
-            'sf_answer.html',
-            salesforce_answer = account_answer
-        )
     elif action == 'check_status':
         heartbeat = get_Ocean_heartbeat(data)
         db_instance.save_data(
@@ -133,7 +129,7 @@ def get_ocean_data():
             key_name='heartbeat',
             key_value=heartbeat
         )
-        return render_ocean_template(data['oceanid'])
+
     elif action == 'list_vng':
         vngs=list_vng(data)
         if not vngs:
@@ -145,20 +141,28 @@ def get_ocean_data():
             key_name='VNGs',
             key_value=num_vng
         )
-        return render_ocean_template(data['oceanid'])
+
     else:
         print ('no valid action')
-        return render_ocean_template(data['oceanid'])
+    db_instance.save_to_s3()
+    return render_ocean_template(data['oceanid'])
 
 def render_ocean_template(ocean_id):
     db_instance = tinydb_handler_class()
+    ocean_json_data = db_instance.get_data_by_key(ocean_id, 'ocean_data') or 'None'
     heartbeat = db_instance.get_data_by_key(ocean_id, 'heartbeat') or 'Can\'t say'
     num_vng = db_instance.get_data_by_key(ocean_id, 'VNGs') or 'None'
+    team_name = 'aaa'
+    score = 150
 
     return render_template(
         'ocean_input.html',
+        ocean_data = ocean_json_data,
         cluster_status=heartbeat,
-        vng=num_vng
+        vng=num_vng,
+        team_name=team_name,
+        score=score
+
     )
 
 @app.route('/monthly_trend', methods=['POST'])
@@ -259,10 +263,12 @@ def calculate():
 def sf_input():
     return render_template('inputs.html')
 
-@app.route('/store', methods=['POST'])
+@app.route('/store', methods=['GET'])
 def store():
     headers = dict(request.headers)
-    data = request.form
-    print("this is some data")
-    print (data)
-    return render_template('store.html', json_data=data)
+    args = request.args
+    print (args)
+    result = []
+    for arg in args:
+        result.append("key: %s Value %s" % (arg, args.get(arg)))
+    return render_template('store.html', json_data='\r\n'.join(result))
