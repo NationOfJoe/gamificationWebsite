@@ -166,16 +166,13 @@ def render_ocean_template(ocean_id):
         {'team_name': 'c',
          'score': 1500},
 ]
-    score = 200
 
     return render_template(
         'ocean_input.html',
         ocean_data = ocean_json_data,
         cluster_status=heartbeat,
         vng=num_vng,
-        team_name=team_name,
-        score=score,
-        scores = scores
+        scores=scores
 
     )
 

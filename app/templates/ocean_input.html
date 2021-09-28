@@ -1,5 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
 <head>
           <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   <nav class="navbar">
@@ -21,8 +38,7 @@
 
 
 <form action="/get_ocean_data" method="post">
-
-    <input type="hidden" id="orgid" name="orgid" value="75095"><br>
+    <input type="hidden" id="orgid" name="orgid" value="75095">
     <label for="oceanId">Ocean ID </label>
     <input type="text" id="oceanId" name="oceanid"><br>
 
@@ -32,19 +48,26 @@
 
     </form>
 <br><br><br>
+<table>
+  <tr>
+    <th>Team Name</th>
+    <th>Score</th>
 
+  </tr>
   <ul>
   {%- for record in scores recursive -%}
+      <tr>
+    <td>{{record.get('team_name')}} </td>
+    <td>{{record.get('score')}}</td>
 
-      {{record.get('team_name')}}      {{record.get('score')}}
+  </tr>
       <br>
 
   {%- endfor -%}
 </ul>
 
+</table>
 <br><br><br>
-team name is : {{team_name}}<br>
-Score : {{score}}<br>
 Status of cluster is {{cluster_status}}<br>
 number of VNGs is {{vng}}
 <br><br>
