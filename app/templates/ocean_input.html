@@ -22,7 +22,6 @@
 
 <form action="/get_ocean_data" method="post">
 
-    <label for="orgid">Customer Organization: (5 digits) </label>
     <input type="hidden" id="orgid" name="orgid" value="75095"><br>
     <label for="oceanId">Ocean ID </label>
     <input type="text" id="oceanId" name="oceanid"><br>
@@ -32,6 +31,16 @@
     <input type="submit" name="action" value="check_status">
 
     </form>
+<br><br><br>
+
+  <ul>
+  {%- for record in scores recursive -%}
+
+      {{record.get('team_name')}}      {{record.get('score')}}
+      <br>
+
+  {%- endfor -%}
+</ul>
 
 <br><br><br>
 team name is : {{team_name}}<br>

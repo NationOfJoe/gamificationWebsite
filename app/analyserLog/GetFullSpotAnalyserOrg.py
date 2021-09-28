@@ -98,17 +98,10 @@ def getAllPotentialSavingsDataOneOrg(filename, orgid_raw):
 
     dist_for_xl = {}
     for account in orgAccounts:
-        # progress += 1
-        # print ('Progress : {}\n'.format(progress))
-        # print("Account - " + str(account))
         potentialSavingServices = spot_api_instance.get_all_potential_savings_for_account(account[0])
         dist = {}
-        # print (potentialSavingServices)
-        # Setting the potential into dictionary
-        if potentialSavingServices['items']:
+        try:
             for saving in potentialSavingServices['items']:
-                # print("Saving -"+ saving["resourceType"])
-                # print("USD -"+ str(saving["potentialSavings"]))
                 if saving["resourceType"] == "TaggedEC2Instance":
                     key = saving["name"]
                 else:
@@ -131,12 +124,13 @@ def getAllPotentialSavingsDataOneOrg(filename, orgid_raw):
 
             # print(dist)
             accountDists.append(dist)
-            dist_for_xl.update({account[0]: potentialSavingServices['items']})
 
             for key in dist.keys():
                 if key not in fields:
                     fields.append(key)
             fields = sort_all_fields(fields)
+        except Exception as e:
+            spot_api_instance.write_to_log('could not perform operation ; reason : {}'.format(e))
 
     # print (accountDists)
 

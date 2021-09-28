@@ -14,6 +14,11 @@ from.constants import init_globals
 import datetime
 from nodb import NoDB
 
+class scoreboard:
+    def __init__(self):
+        self.team_name = None
+        self.score = 0
+
 
 nodb = NoDB()
 nodb.bucket = 'yoavs3bucket'
@@ -153,7 +158,15 @@ def render_ocean_template(ocean_id):
     heartbeat = db_instance.get_data_by_key(ocean_id, 'heartbeat') or 'Can\'t say'
     num_vng = db_instance.get_data_by_key(ocean_id, 'VNGs') or 'None'
     team_name = 'aaa'
-    score = 150
+    scores = [
+        {'team_name': 'a',
+         'score': 150},
+        {'team_name': 'b',
+         'score': 650},
+        {'team_name': 'c',
+         'score': 1500},
+]
+    score = 200
 
     return render_template(
         'ocean_input.html',
@@ -161,7 +174,8 @@ def render_ocean_template(ocean_id):
         cluster_status=heartbeat,
         vng=num_vng,
         team_name=team_name,
-        score=score
+        score=score,
+        scores = scores
 
     )
 
