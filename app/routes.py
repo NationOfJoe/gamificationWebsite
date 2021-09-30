@@ -12,7 +12,6 @@ from .analyserLog.GetFullSpotAnalyserOrg import getAllPotentialSavingsData
 from.constants import init_globals
 
 import datetime
-from nodb import NoDB
 
 class scoreboard:
     def __init__(self):
