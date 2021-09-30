@@ -155,7 +155,7 @@ def render_ocean_template(ocean_id=None):
     num_vng = db_instance.get_data_by_key(ocean_id, 'VNGs') or 'None'
 
     scores = []
-    score_headlines = ['team_name', 'score', 'ocean_id']
+    score_headlines = ['team_name', 'score', 'oceanid']
     scores_raw = db_instance.get_all_data()
     for record in scores_raw:
         temp_score_record = {}
