@@ -29,26 +29,54 @@ class tinydb_handler_class():
         self.this_bucket.upload_file(db_filename_local, s3_bucket_name, db_filenames3)
 
     def save_data(self, ocean_id, key_name, key_value):
-        exists = self.db.search(self.query.oceanid == ocean_id)
-        if exists.__len__() == 0:
-            self.db.insert(
-                {
-                    'oceanid': ocean_id,
-                    key_name: key_value
-                }
-            )
-        else:
-            j = Query()
-            self.db.update(
-                {
-                    'oceanid': ocean_id,
-                    key_name: key_value
-                },
-                 j.oceanid == ocean_id
-            )
+        # exists = self.db.search(self.query.oceanid == ocean_id)
+        # print("exists {}".format(exists))
+        # print("db oceanid {}".format(ocean_id))
+        # if exists.__len__() == 0:
+        #     print('not existing ocean ID')
+        #     self.db.insert(
+        #         {
+        #             'oceanid': ocean_id,
+        #             key_name: key_value
+        #         }
+        #     )
+        #     print('created {2} {0} = {1}'.format(key_name, key_value, ocean_id))
+        # else:
+        #     j = Query()
+        #     print ('existing ocean ID')
+        #     self.db.update(
+        #         {
+        #             'oceanid': ocean_id,
+        #             key_name: key_value
+        #         },
+        #          j.oceanid == ocean_id
+        #     )
+        j = Query()
+        self.db.upsert(
+            {
+                'oceanid': ocean_id,
+                key_name: key_value
+            },
+             j.oceanid == ocean_id
+                )
+        print('inserted {2} {0} = {1}'.format(key_name, key_value, ocean_id))
+
     def get_data_by_key(self, ocean_id, key_name):
         try:
             key_value = self.db.search(self.query.oceanid == ocean_id)[0][key_name]
         except:
+            key_value = None
+        return key_value
+
+    def get_all_data(self):
+        result = self.db.all()
+        return result
+
+    def get_data_by_key_team_name(self, team_name, key_name):
+        k = Query()
+
+        try:
+            key_value = self.db.search(self.query.team_name == team_name)[0][key_name]
+        except Exception as e:
             key_value = None
         return key_value

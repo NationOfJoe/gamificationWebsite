@@ -152,20 +152,35 @@ def get_ocean_data():
     db_instance.save_to_s3()
     return render_ocean_template(data['oceanid'])
 
-def render_ocean_template(ocean_id):
+def render_ocean_template(ocean_id=None):
+
     db_instance = tinydb_handler_class()
     ocean_json_data = db_instance.get_data_by_key(ocean_id, 'ocean_data') or 'None'
     heartbeat = db_instance.get_data_by_key(ocean_id, 'heartbeat') or 'Can\'t say'
     num_vng = db_instance.get_data_by_key(ocean_id, 'VNGs') or 'None'
-    team_name = 'aaa'
-    scores = [
-        {'team_name': 'a',
-         'score': 150},
-        {'team_name': 'b',
-         'score': 650},
-        {'team_name': 'c',
-         'score': 1500},
-]
+
+    scores = []
+    score_headlines = ['team_name', 'score', 'ocean_id']
+    scores_raw = db_instance.get_all_data()
+    for record in scores_raw:
+        temp_score_record = {}
+        for headline in score_headlines:
+            temp_value = record.get(headline) or None
+            temp_score_record.update(
+                {
+                    headline : temp_value
+                }
+            )
+        scores.append(temp_score_record)
+
+    # scores = [
+    #     {'team_name': 'a',
+    #      'score': 150},
+    #     {'team_name': 'b',
+    #      'score': 650},
+    #     {'team_name': 'c',
+    #      'score': 1500},
+# ]
 
     return render_template(
         'ocean_input.html',
@@ -283,3 +298,66 @@ def store():
     for arg in args:
         result.append("key: %s Value %s" % (arg, args.get(arg)))
     return render_template('store.html', json_data='\r\n'.join(result))
+
+
+@app.route('/update_team_score', methods=['GET'])
+def update_team_score():
+    db_instance = tinydb_handler_class()
+    headers = dict(request.headers)
+    args = request.args
+    # print (args)
+    # args = request.form
+    print (args)
+    result = []
+    # team_name = args.get('team_name') or None
+    # ocean_id = args.get('ocean_id') or None
+    team_name = args.get('team_name') or None
+    ocean_id = args.get('ocean_id') or None
+    print (ocean_id)
+    if team_name:
+        print(team_name)
+        ocean_id = db_instance.get_data_by_key_team_name(
+            team_name=team_name,
+            key_name='oceanid'
+        )
+        print(ocean_id)
+        if ocean_id:
+            score = args.get('score')
+            print(score)
+            db_instance.save_data(
+                ocean_id=ocean_id,
+                key_name='score',
+                key_value=score
+            )
+            print('3')
+            print ('success')
+    elif ocean_id:
+        print(ocean_id)
+        score = args.get('score')
+        print(score)
+        db_instance.save_data(
+            ocean_id=ocean_id,
+            key_name='score',
+            key_value=score
+        )
+    db_instance.save_to_s3()
+    return render_ocean_template()
+
+@app.route('/register_team', methods=['POST'])
+def register_team():
+    db_instance = tinydb_handler_class()
+    data = request.form
+    headers = dict(request.headers)
+    print (data)
+    oceanid = data['oceanid']
+    print ('oceanid {}'.format(oceanid))
+    team_name = data['teamname']
+    print ("team name {}".format(team_name))
+    db_instance.save_data(
+        ocean_id=oceanid,
+        key_name='team_name',
+        key_value=team_name
+    )
+    print ('success')
+    db_instance.save_to_s3()
+    return render_ocean_template(oceanid)
