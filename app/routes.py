@@ -173,14 +173,7 @@ def render_ocean_template(ocean_id=None):
             )
         scores.append(temp_score_record)
 
-    # scores = [
-    #     {'team_name': 'a',
-    #      'score': 150},
-    #     {'team_name': 'b',
-    #      'score': 650},
-    #     {'team_name': 'c',
-    #      'score': 1500},
-# ]
+
 
     return render_template(
         'ocean_input.html',
