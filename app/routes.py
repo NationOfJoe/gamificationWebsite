@@ -19,10 +19,6 @@ class scoreboard:
         self.score = 0
 
 
-nodb = NoDB()
-nodb.bucket = 'yoavs3bucket'
-nodb.index = "oceanId"
-
 Menu(app=app)
 init_globals()
 
