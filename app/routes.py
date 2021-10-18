@@ -188,17 +188,37 @@ def update_team_score():
 def register_team():
     db_instance = tinydb_handler_class()
     data = request.form
+    action = request.form.get("action")
     headers = dict(request.headers)
     print (data)
     oceanid = data['oceanid']
-    print ('oceanid {}'.format(oceanid))
-    team_name = data['teamname']
-    print ("team name {}".format(team_name))
-    db_instance.save_data(
-        ocean_id=oceanid,
-        key_name='team_name',
-        key_value=team_name
-    )
-    print ('success')
-    db_instance.save_to_s3()
-    return render_ocean_template(oceanid)
+    print('oceanid {}'.format(oceanid))
+    if action == 'register':
+        team_name = data['teamname']
+        print ("team name {}".format(team_name))
+        db_instance.save_data(
+            ocean_id=oceanid,
+            key_name='team_name',
+            key_value=team_name
+        )
+        print ('success')
+        db_instance.save_to_s3()
+        return render_ocean_template(oceanid)
+    else:
+        ocean_id = oceanid
+        db_instance = tinydb_handler_class()
+        ocean_json_data = db_instance.get_data_by_key(ocean_id, 'ocean_data') or 'None'
+        heartbeat = db_instance.get_data_by_key(ocean_id, 'heartbeat') or 'Can\'t say'
+        num_vng = db_instance.get_data_by_key(ocean_id, 'VNGs') or 'None'
+        headroom = db_instance.get_data_by_key(ocean_id, 'headroom') or 'None'
+        team_name = db_instance.get_data_by_key(ocean_id, 'team_name') or 'None'
+        return render_template(
+            'team_page.html',
+            team_name = team_name,
+            oceanid = oceanid,
+            ocean_data=ocean_json_data,
+            cluster_status=heartbeat,
+            vng=num_vng,
+            headroom=headroom
+        )
+
