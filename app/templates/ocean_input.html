@@ -37,6 +37,7 @@ tr:nth-child(even) {
 
 
 
+
 <form action="/get_ocean_data" method="post">
     <input type="hidden" id="orgid" name="orgid" value="75095">
     <label for="oceanId">Ocean ID </label>
@@ -57,6 +58,7 @@ tr:nth-child(even) {
         <label for="reg_team_name">Team Name: </label>
     <input type="text" id="reg_team_name" name="teamname"><br>
     <input type="submit" name="action" value="register"><br>
+    <input type="submit" name="action" value="go to team page"><br>
 
 </form>
 
@@ -83,9 +85,17 @@ tr:nth-child(even) {
 </ul>
 
 </table>
+
+<br><br><Br>
+
+
+To Input a score , use ?team_name=[team name]&score=[new score] <br>
+or //update_team_score?ocean_id=[ocean ID]&score=[new score]
+
 <br><br><br>
 Status of cluster is {{cluster_status}}<br>
-number of VNGs is {{vng}}
+number of VNGs is {{vng}} <br>
+Headroom is : {{headroom}}
 <br><br>
 
 json data from cluster : <br><br> {{ocean_data}}
