@@ -135,6 +135,12 @@ def scoreboard():
     scores = get_scores_in_order()
     return render_template('scoreboard.html', scores=scores)
 
+@app.route('/scoreboard_for_admins')
+
+def scoreboard_admin():
+    scores = get_scores_in_order()
+    return render_template('scoreboard_for_admins_page.html', scores=scores)
+
 @app.route('/store', methods=['GET'])
 def store():
     headers = dict(request.headers)
@@ -147,22 +153,34 @@ def store():
 
 
 @app.route('/update_team_score', methods=['GET'])
-def update_team_score():
+def update_team_score(ocean_id=None, team_name=None, score=None):
     db_instance = tinydb_handler_class()
     headers = dict(request.headers)
     args = request.args
     print (args)
-    team_name = args.get('team_name') or None
-    ocean_id = args.get('ocean_id') or None
-    print (ocean_id)
-    if team_name:
-        print(team_name)
-        ocean_id = db_instance.get_data_by_key_team_name(
-            team_name=team_name,
-            key_name='oceanid'
-        )
-        print(ocean_id)
-        if ocean_id:
+    if not score:
+        team_name = args.get('team_name') or None
+        ocean_id = args.get('ocean_id') or None
+        print (ocean_id)
+        if team_name:
+            print(team_name)
+            ocean_id = db_instance.get_data_by_key_team_name(
+                team_name=team_name,
+                key_name='oceanid'
+            )
+            print(ocean_id)
+            if ocean_id:
+                score = args.get('score')
+                print(score)
+                db_instance.save_data(
+                    ocean_id=ocean_id,
+                    key_name='score',
+                    key_value=score
+                )
+                print('3')
+                print ('success')
+        elif ocean_id:
+            print(ocean_id)
             score = args.get('score')
             print(score)
             db_instance.save_data(
@@ -170,12 +188,12 @@ def update_team_score():
                 key_name='score',
                 key_value=score
             )
-            print('3')
-            print ('success')
-    elif ocean_id:
-        print(ocean_id)
-        score = args.get('score')
-        print(score)
+    else:
+        if not ocean_id:
+            ocean_id = db_instance.get_data_by_key_team_name(
+                team_name=team_name,
+                key_name='oceanid'
+            )
         db_instance.save_data(
             ocean_id=ocean_id,
             key_name='score',
@@ -192,6 +210,16 @@ def register_team():
     headers = dict(request.headers)
     print (data)
     oceanid = data['oceanid']
+    try:
+        team_name = data['teamname']
+    except Exception as e:
+        team_name = None
+        print(e)
+    try:
+        this_score = data['score']
+    except Exception as e:
+        this_score = None
+        print(e)
     print('oceanid {}'.format(oceanid))
     if action == 'register':
         team_name = data['teamname']
@@ -204,7 +232,7 @@ def register_team():
         print ('success')
         db_instance.save_to_s3()
         return render_ocean_template(oceanid)
-    else:
+    elif action == 'go to team page':
         ocean_id = oceanid
         db_instance = tinydb_handler_class()
         ocean_json_data = db_instance.get_data_by_key(ocean_id, 'ocean_data') or 'None'
@@ -221,4 +249,32 @@ def register_team():
             vng=num_vng,
             headroom=headroom
         )
+    elif action == 'score_change':
+        update_team_score(
+            team_name=team_name,
+            ocean_id=oceanid,
+            score=int(this_score)
+        )
+        db_instance.save_to_s3()
+        scores = get_scores_in_order()
+        return render_template('scoreboard.html', scores=scores)
+    elif action == 'score_add':
+        if oceanid:
+            curr_score = db_instance.get_data_by_key(
+            ocean_id=oceanid,
+            key_name='score'
+        )
+        else:
+            curr_score = db_instance.get_data_by_key_team_name(
+                team_name=team_name,
+                key_name='score'
+            )
+        update_team_score(
+            team_name=team_name,
+            ocean_id=oceanid,
+            score=int(this_score)+int(curr_score)
+        )
+        db_instance.save_to_s3()
+        scores = get_scores_in_order()
+        return render_template('scoreboard.html', scores=scores)
 
