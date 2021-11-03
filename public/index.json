@@ -1,0 +1,148 @@
+[
+{
+	"uri": "/",
+	"title": "Spotlight User Conference",
+	"tags": [],
+	"description": "",
+	"content": "   "
+},
+{
+	"uri": "/welcome.html",
+	"title": "Welcome",
+	"tags": [],
+	"description": "",
+	"content": "The first Spotlight user conference! Introductions Amit Bar Oz Product Architect, Containers  Zak Harabedian Customer Success Engineer  Eric Knauer Technical Marketing Evangelist  "
+},
+{
+	"uri": "/welcome/login.html",
+	"title": "Agenda",
+	"tags": [],
+	"description": "",
+	"content": " 30 min prior to the session - assisting with pre-requisites and Q\u0026amp;A 15 min - Kubernetes \u0026amp; Ocean creation + During the creation period - What is Ocean and what are its benefits? We’ll cover a couple of slides during the creation process of the Kubernetes and Ocean Virtual Node Groups Headroom Next steps (optional) Cleanup instructions (optional)  "
+},
+{
+	"uri": "/prerequisites.html",
+	"title": "Prerequisites",
+	"tags": [],
+	"description": "",
+	"content": "For this workshop you will need to set up the following:\n Managed Kubernetes cluster (EKS, GKE, AKS, DIY on AWS) with kubectl access. Spot Organization with an Account connected to the relevant AWS account/GCP project/Azure subscription. An Ocean cluster connected to the Kubernetes cluster mentioned above.  "
+},
+{
+	"uri": "/prerequisites/spot_registration.html",
+	"title": "Spot Registration",
+	"tags": [],
+	"description": "",
+	"content": "Required unless already registered Sign-up to the Spot platform through the sign-up page.\nFollow the guide to connect your Cloud environment:\n AWS account GCP project Azure subscription  "
+},
+{
+	"uri": "/prerequisites/ocean_creation.html",
+	"title": "Ocean Creation",
+	"tags": [],
+	"description": "",
+	"content": "Importing of an existing Kubernetes cluster AWS EKS  Connect an existing EKS Cluster  GCP GKE  Connect an existing GKE Cluster  Azure AKS  Connect an existing AKS Cluster   Creation of a Kubernetes cluster with Ocean Terraform Modules AWS EKS  Ocean EKS Terraform Module  GCP GKE  Ocean GKE Terraform Module  Azure AKS  Ocean AKS Terraform Module   eksctl eksctl could also be used to create the EKS \u0026amp; Ocean resources eksctl\n kOps You can also use kOps in order to create Ocean clusters on AWS\nOcean with kOps\n"
+},
+{
+	"uri": "/ocean_workshop.html",
+	"title": "Ocean Workshop",
+	"tags": [],
+	"description": "",
+	"content": "In our section we will create a separate VNG to demonstrate how to easily split workloads between two groups of machines. This is usually done for performance, security, and sometimes it helps with further optimizing the cluster\u0026rsquo;s costs.\nIn the example we are going to cover specific values of VNGs, VNGs support multiple configurations in each of the Cloud Providers, you can find the full reference in the following links:\n AWS VNGs AKS VNGs GKE VNGs  Screenshots might be slightly different due to the different Providers but the process is similar.\n For GKE users - please note that the control plane might resize during the workshop and might cause the API to be unavailable for a couple of minutes, be patient and it will be resolved automatically.\n "
+},
+{
+	"uri": "/ocean_workshop/vng_workshop/assigning_pods_to_nodes.html",
+	"title": "Assigning Pods to Nodes",
+	"tags": [],
+	"description": "",
+	"content": "In order to use VNGs effectively we will need to use Kubernetes constraints in order to constrain a Pod so that it can only run on a particular set of Nodes, there are several ways to do that using the label selectors mechanism.\n nodeSelectors nodeSelector is a field of PodSpec. It specifies a map of key-value pairs. For the pod to be eligible to run on a node, the node must have each of the indicated key-value pairs as labels Discuss nodeLabels and taints/tolerations\nThe Node on which the Pod will be scheduled on can have multiple nodeLabels that are not specified on the Pod nodeSelector section.\n  Affinity/Anti-Affinity The affinity/anti-affinity feature expands the types of constraints you can express. The key enhancements are (taken from the official Kubernetes documentation):\n The affinity/anti-affinity language is more expressive. The language offers more matching rules besides exact matches created with a logical AND operation. you can indicate that the rule is \u0026ldquo;soft\u0026rdquo;/\u0026ldquo;preference\u0026rdquo; rather than a hard requirement, so if the scheduler can\u0026rsquo;t satisfy it, the pod will still be scheduled; you can constrain against labels on other pods running on the node (or other topological domain), rather than against labels on the node itself, which allows rules about which pods can and cannot be co-located The affinity feature consists of two types of affinity, \u0026ldquo;node affinity\u0026rdquo; and \u0026ldquo;inter-pod affinity/anti-affinity\u0026rdquo;. Node affinity is like the existing nodeSelector (but with the first two benefits listed above), while inter-pod affinity/anti-affinity constraints against pod labels rather than node labels, as described in the third item listed above, in addition to having the first and second properties listed above.  Ocean will respect the required affinity/anti-affinity while making scaling decisions.\n  Taints/Tolerations Taints allow a node to repel a set of pods. Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.\nTaints and tolerations work together to ensure that pods are not scheduled onto inappropriate nodes. One or more taints are applied to a node; this marks that the node should not accept any pods that do not tolerate the taints.\nTaints allow Pods who Tolerate them to be scheduled on the specific group of nodes, but it does not force that (e.g - you might also need to use nodeLabels in order to ensure the right behaviour).\n "
+},
+{
+	"uri": "/ocean_workshop/vng_workshop/create_vng.html",
+	"title": "Creating a VNG",
+	"tags": [],
+	"description": "",
+	"content": "First connect to your Spot Organization and navigate to the relevant Spot Account On the left bar, under the Ocean section select the Cloud Clusters option You’ll enter the Ocean Clusters section in which you should enter the relevant Ocean cluster in which you’d like to practice on In the Ocean cluster view, enter the Virtual Node Groups tab Press on the Create new Virtual Node Group button In the pop-up screen, choose either Configure Manually (AKS/EKS, this will derive all the configurations from the default VNG, with the ability to override those) or the node pool from which you want the configuration to be imported from (GKE) and click Continue\n  AWS/AKS         GKE       Specify example-1 as the VNG Name and in the Node Selection section specify the following Node Labels\nenv: ocean-workshop\nexample: 1\nClick Save at the bottom of the page.\nWe now have our new VNG ready.\n"
+},
+{
+	"uri": "/ocean_workshop/vng_workshop.html",
+	"title": "Virtual Node Groups (VNGs)",
+	"tags": [],
+	"description": "",
+	"content": "The challenge of running multiple workload types (separate applications, dev/test environments, node groups requiring a GPU AMI, etc…) on the same Kubernetes cluster is applying a unique configuration to each one of the workloads in a heterogeneous environment. When your worker nodes are managed in a standard managed cluster (EKS, GKE, AKS), usually every workload type is managed separately in a different node pool/group.\nWith Ocean, you can define Virtual Node Groups which allow you to configure multiple workload types on the same Ocean Cluster.\nVNGs could also be referred to as Launch Specifications.\n  Use Cases  Workload separation/Dedicated Nodes Nodes with Special Hardware/Multiple node configurations (different networks/OSs/machine types/lifecycle, etc)  "
+},
+{
+	"uri": "/ocean_workshop/headroom/headroom_overview.html",
+	"title": "Headroom Overview",
+	"tags": [],
+	"description": "",
+	"content": "Headroom will allow you to keep a little bit of extra capacity on top of your cluster to allow rapid scheduling of new PODs (usually triggered by the HPA or VPA) and it’ll also assist with ensuring that enough capacity is available when a Node interruption/preemption will occur.\nHeadroom can be configured automatically and also manually\nAutomatic Headroom Automatic refers to headroom that is dynamic and designed to accommodate the next scale up of services in the cluster. It is configured on the Ocean level as a percentage of the entire cluster resources. The automatic headroom is being calculated hourly and will accommodate according to the required amount of resources in the cluster.\nManual Headroom Manual headroom refers to headroom requirements that are specified by the user, the manual headroom is configured on either the Ocean and/or VNG level and is specified as headroom units that consist of the following components:\n Number of units vCPU per unit Memory per unit GPU per unit  As of recently Ocean supports configuring both automatic and manual headroom on the same cluster (one on top of the other)\n "
+},
+{
+	"uri": "/ocean_workshop/vng_workshop/vng_workshop_instructions.html",
+	"title": "VNG Lab",
+	"tags": [],
+	"description": "",
+	"content": "Using nodeSelectors Let’s deploy our workload, in our examples we will a deploy simple nginx Pod just to simulate the behaviour of Ocean alongside the Kubernetes Scheduler.\nCreate a file vng-example.yaml with the following content\napiVersion: apps/v1 kind: Deployment metadata: name: example-1 spec: selector: matchLabels: app: nginx replicas: 1 template: metadata: labels: app: nginx spec: containers: - name: nginx-dev image: nginx resources: requests: memory: \u0026#34;100Mi\u0026#34; cpu: \u0026#34;256m\u0026#34; nodeSelector: env: ocean-workshop example: \u0026#34;1\u0026#34; Apply the file using kubectl, run kubectl apply -f vng-example.yaml\n➜ kubectl apply -f vng-example.yaml deployment.apps/example-1 created List the pods,nodes from the cluster, you’ll be able to see the created Pod in a Pending state, run kubectl get pods,nodes\n➜ kubectl get pods,nodes NAME READY STATUS RESTARTS AGE pod/example-1-7f8b5549bb-4k8rp 0/1 Pending 0 14s NAME STATUS ROLES AGE VERSION node/ip-192-168-64-43.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 51m v1.19.6-eks-49a6c0 Following a couple of minutes, run kubectl get pods,nodes -o wide, we will see that a new node joined our cluster and that the Pod is being created/running on top of it\n➜ kubectl get pods,nodes -o wide 21/06/14 | 12:23:41 NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS GATES pod/example-1-7f8b5549bb-4k8rp 0/1 ContainerCreating 0 83s \u0026lt;none\u0026gt; ip-192-168-46-105.us-west-2.compute.internal \u0026lt;none\u0026gt; \u0026lt;none\u0026gt; NAME STATUS ROLES AGE VERSION INTERNAL-IP EXTERNAL-IP OS-IMAGE KERNEL-VERSION CONTAINER-RUNTIME node/ip-192-168-46-105.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 45s v1.19.6-eks-49a6c0 192.168.46.105 35.160.241.120 Amazon Linux 2 5.4.117-58.216.amzn2.x86_64 docker://19.3.13 node/ip-192-168-64-43.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 52m v1.19.6-eks-49a6c0 192.168.64.43 54.202.238.83 Amazon Linux 2 5.4.117-58.216.amzn2.x86_64 docker://19.3.13 Describe the node to verify the nodeLabels are assigned to it, run kubectl describe \u0026lt;node-name\u0026gt;\n➜ kubectl describe node ip-192-168-46-105.us-west-2.compute.internal 21/06/14 | 12:26:10 Name: ip-192-168-46-105.us-west-2.compute.internal Roles: \u0026lt;none\u0026gt; Labels: alpha.eksctl.io/cluster-name=eksctl-demo alpha.eksctl.io/instance-id=i-093742eb4f412401a alpha.eksctl.io/nodegroup-name=ocean beta.kubernetes.io/arch=amd64 beta.kubernetes.io/instance-type=c4.large beta.kubernetes.io/os=linux env=ocean-workshop example=1 failure-domain.beta.kubernetes.io/region=us-west-2 failure-domain.beta.kubernetes.io/zone=us-west-2b kubernetes.io/arch=amd64 kubernetes.io/hostname=ip-192-168-46-105.us-west-2.compute.internal kubernetes.io/os=linux node-lifecycle=spot node.kubernetes.io/instance-type=c4.large spotinst.io/node-lifecycle=spot topology.kubernetes.io/region=us-west-2 topology.kubernetes.io/zone=us-west-2b  In addition to node labels you define, nodes come pre-populated with a standard set of labels. See Well-Known Labels, Annotations and Taints for a list of these.\n Ocean expands the built in Kubernetes node-labels functionality with some proprietary labels supported by Ocean. See Labels \u0026amp; Taints for further details.\n We are now able to specify when we want to force a specific workload to run on machines of the example-1 VNG, in the current state, Pods with no specific constraints (e.g not directed toward specific type of nodes) might be placed on nodes from the example-1 VNG, in order to prevent that we will also need to assign a Taint to the VNG, the Pods that we want to run on the tainted VNG should Tolerate that Taint.\n Using Taints/Tolerations In order to demonstrate that, let’s add a new VNG, follow the same process but specify the following configurations - in the Name specify example-2, in the Node Selection section specify:\nNode Labels (formatted as key: value)\n env: ocean-workshop example: 2  Node Taints\n Key: example\nValue: 2\nEffect: NoSchedule    Click the save button on the bottom of the page\nCreate a file vng-example-2.yaml file with the following content:\napiVersion: apps/v1 kind: Deployment metadata: name: example-2-1 spec: selector: matchLabels: app: nginx replicas: 1 template: metadata: labels: app: nginx spec: containers: - name: nginx-dev image: nginx resources: requests: memory: \u0026#34;100Mi\u0026#34; cpu: \u0026#34;256m\u0026#34; nodeSelector: env: ocean-workshop example: \u0026#34;2\u0026#34; tolerations: - key: \u0026#34;example\u0026#34; operator: \u0026#34;Equal\u0026#34; value: \u0026#34;2\u0026#34; effect: \u0026#34;NoSchedule\u0026#34; --- apiVersion: apps/v1 kind: Deployment metadata: name: example-2-2 spec: selector: matchLabels: app: nginx replicas: 1 template: metadata: labels: app: nginx spec: containers: - name: nginx-dev image: nginx resources: requests: memory: \u0026#34;100Mi\u0026#34; cpu: \u0026#34;256m\u0026#34; nodeSelector: env: ocean-workshop example: \u0026#34;2\u0026#34; While both Pods require our nodeLabels only one of them tolerates the node taints, let’s view it’s effect: Run kubectl apply -f vng-example-2.yaml\n➜ kubectl apply -f vng-example-2.yaml deployment.apps/example-2-1 created deployment.apps/example-2-2 created We will now see that both our Pods are pending, run kubectl get pods,nodes\n➜ kubectl get pods,nodes NAME READY STATUS RESTARTS AGE pod/example-1-7f8b5549bb-xnsfq 1/1 Running 0 48m pod/example-2-1-64d9d4877d-rv2pg 0/1 Pending 0 39s pod/example-2-2-7d55b5b8cf-dfkpw 0/1 Pending 0 37s NAME STATUS ROLES AGE VERSION node/ip-192-168-46-105.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 132m v1.19.6-eks-49a6c0 A couple of minutes later Ocean will scale up a new machine to satisfy the supported Pod, we will see that only one of the Pods (example-2-1) will be scheduled while the other wont since it does not tolerate the nodes taint.\nRun kubectl get pods,nodes -o wide\n➜ kubectl get pods,nodes -o wide NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE READINESS GATES pod/example-1-7f8b5549bb-xnsfq 1/1 Running 0 50m 192.168.48.21 ip-192-168-46-105.us-west-2.compute.internal \u0026lt;none\u0026gt; \u0026lt;none\u0026gt; pod/example-2-1-64d9d4877d-rv2pg 1/1 Running 0 2m26s 192.168.24.234 ip-192-168-24-193.us-west-2.compute.internal \u0026lt;none\u0026gt; \u0026lt;none\u0026gt; pod/example-2-2-7d55b5b8cf-dfkpw 0/1 Pending 0 2m24s \u0026lt;none\u0026gt; \u0026lt;none\u0026gt; \u0026lt;none\u0026gt; \u0026lt;none\u0026gt; NAME STATUS ROLES AGE VERSION INTERNAL-IP EXTERNAL-IP OS-IMAGE KERNEL-VERSION CONTAINER-RUNTIME node/ip-192-168-24-193.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 87s v1.19.6-eks-49a6c0 192.168.24.193 54.149.39.228 Amazon Linux 2 5.4.117-58.216.amzn2.x86_64 docker://19.3.13 node/ip-192-168-46-105.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 134m v1.19.6-eks-49a6c0 192.168.46.105 35.160.241.120 Amazon Linux 2 5.4.117-58.216.amzn2.x86_64 docker://19.3.13 Run kubectl describe \u0026lt;pod-name\u0026gt; Under the Events section you’ll see that the reason for the Pod not being scheduled is because there is a node with a taint that the pod did not tolerate\n➜ kubectl describe pod/example-2-2-7d55b5b8cf-dfkpw Name: example-2-2-7d55b5b8cf-dfkpw Namespace: default Priority: 0 Node: \u0026lt;none\u0026gt; Labels: app=nginx pod-template-hash=7d55b5b8cf Annotations: kubernetes.io/psp: eks.privileged Status: Pending IP: IPs: \u0026lt;none\u0026gt; Controlled By: ReplicaSet/example-2-2-7d55b5b8cf Containers: nginx-dev: Image: nginx Port: \u0026lt;none\u0026gt; Host Port: \u0026lt;none\u0026gt; Requests: cpu: 256m memory: 100Mi Environment: \u0026lt;none\u0026gt; Mounts: /var/run/secrets/kubernetes.io/serviceaccount from default-token-wlpsv (ro) Conditions: Type Status PodScheduled False Volumes: default-token-wlpsv: Type: Secret (a volume populated by a Secret) SecretName: default-token-wlpsv Optional: false QoS Class: Burstable Node-Selectors: env=ocean-workshop example=2 Tolerations: node.kubernetes.io/not-ready:NoExecute op=Exists for 300s node.kubernetes.io/unreachable:NoExecute op=Exists for 300s Events: Type Reason Age From Message ---- ------ ---- ---- ------- Warning FailedScheduling 5m59s (x4 over 6m46s) default-scheduler 0/1 nodes are available: 1 node(s) didn't match node selector. Warning FailedScheduling 5m47s (x2 over 5m47s) default-scheduler 0/2 nodes are available: 2 node(s) didn't match node selector. Warning FailedScheduling 31s (x7 over 5m37s) default-scheduler 0/2 nodes are available: 1 node(s) didn't match node selector, 1 node(s) had taint {example: 2}, that the pod didn't tolerate. "
+},
+{
+	"uri": "/ocean_workshop/headroom/allow_manual_headroom.html",
+	"title": "Configure Manual Headroom",
+	"tags": [],
+	"description": "",
+	"content": "In our example we are going to use manual headroom in order to demostrate the value of having headroom capacity.\nBy default while creating an Ocean cluster, automatic headroom is enabled while manual headroom is not.\nSpecifically for AKS users both automatic and manual headroom are enabled by default\n Enable automatic headroom by following one of the two sections based on your preference\n  Allow both automatic and manual headroom by enabling the enableAutomaticAndManualHeadroom configuration (recommended)   Instructions   This process will soon be available through the Spot Console.\n Enter your Ocean cluster, click on the Actions button on the top right and choose Edit Cluster On the screen on the top bar select the Review tab Switch to JSON view on the top right Enter edit mode Search for the autoScaler section and make sure the following exists if not, add them (no need to modify anything else) and click Update\n{ \u0026#34;autoScaler\u0026#34;: { \u0026#34;isAutoConfig\u0026#34;: true, \u0026#34;enableAutomaticAndManualHeadroom\u0026#34;: true } }   \n  Disable automatic headroom   Instructions   Enter your Ocean cluster, click on the Actions button on the top right and choose Edit Cluster On the screen on the top bar select the Review tab Switch to JSON view on the top right Enter edit mode Search for the autoScaler section and make sure the isAutoConfig property is set to false, if enableAutomaticAndManualHeadroom is defined, set it to false as well and click the Update button\n{ \u0026#34;autoScaler\u0026#34;: { \u0026#34;isAutoConfig\u0026#34;: false, \u0026#34;enableAutomaticAndManualHeadroom\u0026#34;: false } }   \n  "
+},
+{
+	"uri": "/ocean_workshop/vng_workshop/summary.html",
+	"title": "Summary",
+	"tags": [],
+	"description": "",
+	"content": " To summarize the VNG section, VNGs allow us to separate our workloads if needed, it allows us to have different node configurations in the cluster and expands the benefits Ocean provides.\nWe covered the usage of various Kubernetes constraints, we learned how we can use nodeSelectors or Affinity/Anti-Affinity rules to force the required node from the Pod side and how a node can repel Pods from being scheduled on top of it, most importantly we learned how we can use those types of constraints while utilising Ocean VNGs.\nYou can use the Launch API calls to manually launch additional nodes within the VNG (AWS, GKE, AKS)\n (Currently only available for AWS) While using the API/Terraform, during the creation of a VNG you can define the initalNodes url param to specify the initial number of nodes required in the VNG.\n "
+},
+{
+	"uri": "/ocean_workshop/headroom/headroom_lab.html",
+	"title": "Headroom Lab",
+	"tags": [],
+	"description": "",
+	"content": "In order to demonstrate the headroom effect on POD scheduling time, we are going to create two different VNGs, one with manual headroom capacity and one without, following that, we will run two new deployments on the cluster, each one will be directed to a different VNG, we’ll see that the one direct toward the VNG with the headroom capacity will be scheduled much sooner if not immediate while the other one will be pending for a while.\n Follow the same VNG creation process, this VNG will be created with some manual Headroom. Specify example-3-1 as the Name of the new VNG, under the Node Selection section specify the following Node Labels (formatted as key: value):\n env: ocean-workshop example: 3-1   Scroll down and open the Advanced section, and find the Headroom configurations area Specify the following Headroom capacity and click the Save button\nReserve: 3\nCPU: 100\nMemory: 256\nGPU: 0\nNow let’s create another VNG, this one without any Headroom capacity.\nSpecify example-3-2 as the Name of the new VNG, under the Node Selection section specify the following Node Labels (formatted as key: value):\n env: ocean-workshop example: 3-2   Create a file headroom-example.yaml with the following content:\napiVersion: apps/v1 kind: Deployment metadata: name: example-3-1 spec: selector: matchLabels: app: nginx replicas: 3 template: metadata: labels: app: nginx spec: containers: - name: nginx-dev image: nginx resources: requests: memory: \u0026#34;100Mi\u0026#34; cpu: \u0026#34;256m\u0026#34; nodeSelector: example: 3-1 --- apiVersion: apps/v1 kind: Deployment metadata: name: example-3-2 spec: selector: matchLabels: app: nginx replicas: 3 template: metadata: labels: app: nginx spec: containers: - name: nginx-dev image: nginx resources: requests: memory: \u0026#34;100Mi\u0026#34; cpu: \u0026#34;256m\u0026#34; nodeSelector: example: 3-2 The first directed to the VNG labeled with the env: test1 node label and the second directed to the VNG labeled with the env: test2 label.\nApply the file to the cluster, run kubectl apply -f headroom-example.yaml\n➜ kubectl apply -f headroom-example.yaml deployment.apps/example-3-1 created deployment.apps/example-3-2 created Run kubectl get pods,nodes -o wide We’ll now see the Pods from the first deployment (example-3-1) are scheduled and running while the Pods from the second deployment still do not (example-3-2)\n➜ kubectl get pods,nodes NAME READY STATUS RESTARTS AGE pod/example-1-7f8b5549bb-xnsfq 1/1 Running 0 111m pod/example-2-1-64d9d4877d-rv2pg 1/1 Running 0 63m pod/example-2-2-7d55b5b8cf-dfkpw 0/1 Pending 0 63m pod/example-3-1-7c8db8d4cc-4njwh 1/1 Running 0 9s pod/example-3-1-7c8db8d4cc-ldj8z 1/1 Running 0 9s pod/example-3-1-7c8db8d4cc-x6wwg 1/1 Running 0 9s pod/example-3-2-c47d8b56d-fc79p 0/1 Pending 0 7s pod/example-3-2-c47d8b56d-hnq25 0/1 Pending 0 7s pod/example-3-2-c47d8b56d-lcr4r 0/1 Pending 0 7s NAME STATUS ROLES AGE VERSION node/ip-192-168-24-193.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 62m v1.19.6-eks-49a6c0 node/ip-192-168-46-105.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 3h15m v1.19.6-eks-49a6c0 node/ip-192-168-70-3.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 28m v1.19.6-eks-49a6c0 A couple of minutes later we can see that the Pods from the second Deployment have also been scheduled\n➜ kubectl get pods,nodes 21/06/14 | 15:40:02 NAME READY STATUS RESTARTS AGE pod/example-1-7f8b5549bb-xnsfq 1/1 Running 0 112m pod/example-2-1-64d9d4877d-rv2pg 1/1 Running 0 64m pod/example-2-2-7d55b5b8cf-dfkpw 0/1 Pending 0 64m pod/example-3-1-7c8db8d4cc-4njwh 1/1 Running 0 112s pod/example-3-1-7c8db8d4cc-ldj8z 1/1 Running 0 112s pod/example-3-1-7c8db8d4cc-x6wwg 1/1 Running 0 112s pod/example-3-2-c47d8b56d-fc79p 0/1 ContainerCreating 0 110s pod/example-3-2-c47d8b56d-hnq25 0/1 ContainerCreating 0 110s pod/example-3-2-c47d8b56d-lcr4r 0/1 ContainerCreating 0 110s NAME STATUS ROLES AGE VERSION node/ip-192-168-17-86.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 52s v1.19.6-eks-49a6c0 node/ip-192-168-24-193.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 63m v1.19.6-eks-49a6c0 node/ip-192-168-46-105.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 3h17m v1.19.6-eks-49a6c0 node/ip-192-168-70-3.us-west-2.compute.internal Ready \u0026lt;none\u0026gt; 30m v1.19.6-eks-49a6c0 "
+},
+{
+	"uri": "/ocean_workshop/headroom.html",
+	"title": "Headroom",
+	"tags": [],
+	"description": "",
+	"content": "In this section we will cover the idea of Headroom, Automatic and Manual, we will demostrate the affect having sufficent Headroom capacity in the cluster has on Pod scheudling time.\n"
+},
+{
+	"uri": "/ocean_workshop/headroom/summary.html",
+	"title": "Summary",
+	"tags": [],
+	"description": "",
+	"content": "In this section we saw the benefit of Headroom, as the Pods from the Deployment where we had some Headroom capacity were able to schedule pretty much automatically without waiting for the infrastructure, the second Deployment had to wait for a new machine to launch, which took approximately 2 minutes in our case.\nUtilizing both the automatic and manual headroom features can dramatically improve your application performance especially where the scheduling time is crucial.\n"
+},
+{
+	"uri": "/whats_next.html",
+	"title": "Additional Reading",
+	"tags": [],
+	"description": "",
+	"content": "Explore additional Ocean features and capabilities  Kubernetes scaling behavior Cluster roll Right sizing Cost analysis Workload migration (currently only available for AWS) Running hours Autohealing Tips \u0026amp; best practices   Learn more about the Ocean Controller  Hear it from our customers  Ticketmaster re:Invent session  "
+},
+{
+	"uri": "/ocean_workshop/clean_up.html",
+	"title": "Cleanup",
+	"tags": [],
+	"description": "",
+	"content": "At the same folder we are working in run the following commands:\nkubectl delete -f vng-example.yaml kubectl delete -f vng-example-2.yaml kubectl delete -f headroom-example.yaml Enter the Spot console, navigate to the Virtual Node Groups tab in the relevant Ocean cluster, select all the VNGs created through this workshop (example-1, example-2, example-3-1, example-3-2) and press the Delete button Specify the required Delete me string and press the Delete button. In case of need/want - remove any additional resources created as a prerequisite - the Ocean cluster \u0026amp; the managed Kubernetes cluster.\n"
+},
+{
+	"uri": "/categories.html",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "/tags.html",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]
