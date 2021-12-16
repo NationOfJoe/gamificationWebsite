@@ -16,7 +16,18 @@
 
   <title>Ocean Workshop :: Spot Ocean Workshop</title>
 
-   
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nucleus.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome-all.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/hybrid.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/featherlight.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/perfect-scrollbar.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auto-complete.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/atom-one-dark-reasonable.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/hugo-theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-blue.css') }}">
+
+<!--   
   <link href="./css/nucleus.css" rel="stylesheet">
   <link href="./css/fontawesome-all.min.css" rel="stylesheet">
   <link href="./css/hybrid.css" rel="stylesheet">
@@ -28,9 +39,11 @@
   <link href="./css/hugo-theme.css" rel="stylesheet">
   
   <link href="./css/theme-blue.css" rel="stylesheet">
-  
+-->
 
   <script src="./js/jquery-3.5.1.min.js"></script>
+  <script src="{{url_for('static', filename='js/testing.js')}}"></script>
+
 
   <style>
     :root #header + #content > #left > #rlblock_left{

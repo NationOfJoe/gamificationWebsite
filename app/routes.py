@@ -32,6 +32,16 @@ def ocean_feat():
     return render_template('ocean_input.html')
 
 
+##FRONTEND
+@app.route('/ocean_lab')
+def ocean_lab():
+    return render_template('ocean_lab.html')
+
+@app.route('/ocean_workshop')
+def ocean_workshop():
+    return render_template('ocean_workshop.html')
+##
+
 
 @app.route('/get_ocean_data', methods=['POST'])
 def get_ocean_data():
